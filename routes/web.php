@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CobaController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', [CobaController::class, 'index']);
+Route::redirect('/', '/home', 301);
+
+Route::get('/home', [DashboardController::class, 'home'])->name('home');
