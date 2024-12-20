@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookController;
 use App\Http\Controllers\CobaController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -19,3 +20,5 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/home', 301);
 
 Route::get('/home', [DashboardController::class, 'home'])->name('home');
+
+Route::resource('/books', BookController::class);
