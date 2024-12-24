@@ -1,3 +1,6 @@
+## Prasyarat
+Sebelum memulai instalasi, pastikan komputer Anda telah memenuhi prasyarat berikut:
+
 - PHP >= 8.1
 - Composer
 - MySql
