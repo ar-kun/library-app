@@ -56,4 +56,4 @@ Sebelum memulai instalasi, pastikan komputer Anda telah memenuhi prasyarat berik
     php artisan serve
     ```
 
-Proyek akan diakses pada `http://localhost:8000` secara default.
+Proyek akan diakses pada `http://localhost:8000` / `http://127.0.0.1:8000` secara default.
