@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -32,19 +33,31 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request);
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|exists:categories,id',
             'stock' => 'required|integer|min:0',
             'summary' => 'required|string|max:1000',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        if ($request->file('image')) {
+            $validated['image'] = $request->file('image')->store('books-'  . date('Y') . date('m'));
+        }
+
+        // if ($request->hasFile('image')) {
+        //     $image = $request->file('image');
+        //     $imageName = time() . '.' . $image->getClientOriginalExtension();
+        //     $image->move(public_path('images'), $imageName);
+        // }
 
         Book::create([
             'title' => $validated['title'],
             'category_id' => $validated['category'], // Foreign key field
             'stock' => $validated['stock'],
             'summary' => $validated['summary'],
-            'image' => 'https://flowbite.s3.amazonaws.com/docs/gallery/square/image.jpg'
+            'image' => $validated['image'],
         ]);
 
         return redirect()->route('books.index')->with('success', 'Book has been successfully created!');
@@ -55,7 +68,8 @@ class BookController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $book = Book::findOrFail($id);
+        return view('books.show', compact('book'));
     }
 
     /**
@@ -63,7 +77,9 @@ class BookController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $book = Book::findOrFail($id);
+        $categories = Category::all();
+        return view('books.edit', compact('book', 'categories'));
     }
 
     /**
@@ -71,7 +87,40 @@ class BookController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        /**
+         * Buat code untuk validasi inputan user
+         */
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|exists:categories,id',
+            'stock' => 'required|integer|min:0',
+            'summary' => 'required|string|max:1000',
+            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        /**
+         * Ambil buku sesuai dengan id yang dikirim / lalu update berdasarkan perubahan yang dikirimkan user
+         */
+        $book = Book::findOrFail($id);
+
+        if ($request->file('image')) {
+            if ($book->image) {
+                Storage::delete($book->image);
+            }
+            $validated['image'] = $request->file('image')->store('books-'  . date('Y') . date('m'));
+        }
+        // dd($validated);
+
+        $book->update([
+            'title' => $validated['title'],
+            'category_id' => $validated['category'], // Foreign key field
+            'stock' => $validated['stock'],
+            'summary' => $validated['summary'],
+            'image' => $validated['image'],
+        ]);
+
+        return redirect()->route('books.index')->with('success', 'Book has been successfully updated!');
     }
 
     /**
@@ -79,6 +128,11 @@ class BookController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $book = Book::findOrFail($id);
+        if ($book->image) {
+            Storage::delete($book->image);
+        }
+        $book->delete();
+        return redirect()->route('books.index')->with('success', 'Book has been successfully deleted!');
     }
 }
