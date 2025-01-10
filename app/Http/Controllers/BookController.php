@@ -15,7 +15,7 @@ class BookController extends Controller
     public function index()
     {
         $books = Book::with('category')->get();
-        return view('books.index', compact('books'));
+        return view('Books.index', compact('books'));
         // return view('books.index', ['books' => $books]);
     }
 
@@ -25,7 +25,7 @@ class BookController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('books.create', compact('categories'));
+        return view('Books.create', compact('categories'));
     }
 
     /**
@@ -69,7 +69,7 @@ class BookController extends Controller
     public function show(string $id)
     {
         $book = Book::findOrFail($id);
-        return view('books.show', compact('book'));
+        return view('Books.show', compact('book'));
     }
 
     /**
@@ -79,7 +79,7 @@ class BookController extends Controller
     {
         $book = Book::findOrFail($id);
         $categories = Category::all();
-        return view('books.edit', compact('book', 'categories'));
+        return view('Books.edit', compact('book', 'categories'));
     }
 
     /**
@@ -133,6 +133,6 @@ class BookController extends Controller
             Storage::delete($book->image);
         }
         $book->delete();
-        return redirect()->route('books.index')->with('success', 'Book has been successfully deleted!');
+        return redirect()->route('Books.index')->with('success', 'Book has been successfully deleted!');
     }
 }
